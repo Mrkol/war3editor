@@ -1,0 +1,16 @@
+c:\users\roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\Editor.exe.config
+c:\users\roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\Editor.exe
+c:\users\roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\Editor.pdb
+c:\users\roman\documents\visual studio 2015\Projects\Editor\Editor\obj\Debug\Editor.csprojResolveAssemblyReference.cache
+c:\users\roman\documents\visual studio 2015\Projects\Editor\Editor\obj\Debug\Editor.exe
+c:\users\roman\documents\visual studio 2015\Projects\Editor\Editor\obj\Debug\Editor.pdb
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\Editor\bin\Debug\MpqLib.dll
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\Editor\bin\Debug\MpqLib.pdb
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\Ionic.Zlib.CF.dll
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\OpenTK.dll
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\OpenTK.GLControl.dll
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\OpenTK.pdb
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\OpenTK.xml
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\bin\Debug\OpenTK.GLControl.xml
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\obj\Debug\Editor.GUI.EnvironmentEditor.resources
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\Editor\obj\Debug\Editor.csproj.GenerateResource.Cache

@@ -1,0 +1,7 @@
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\MpqLib\bin\Debug\MpqLib.dll.config
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\MpqLib\bin\Debug\MpqLib.dll
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\MpqLib\bin\Debug\MpqLib.pdb
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\MpqLib\obj\Debug\MpqLib.dll
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\MpqLib\obj\Debug\MpqLib.pdb
+C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\MpqLib\obj\Debug\MpqLib.csprojResolveAssemblyReference.cache
+C:\Users\Roman\documents\visual studio 2015\Projects\Editor\MpqLib\bin\Debug\Ionic.Zlib.CF.dll
