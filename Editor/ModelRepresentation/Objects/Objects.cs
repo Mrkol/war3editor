@@ -15,6 +15,7 @@ namespace Editor.ModelRepresentation.Objects
         public Vector3 Maximum;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Node
     {
         public uint InclusiveSize;
@@ -27,6 +28,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KGSC> Kgsc;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct Sequence
     {
         public string Name;
@@ -44,6 +46,7 @@ namespace Editor.ModelRepresentation.Objects
         public uint Duration;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Texture
     {
         public uint ReplaceableId;
@@ -51,6 +54,7 @@ namespace Editor.ModelRepresentation.Objects
         public uint Flags;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SoundTrack
     {
         public string FileName;
@@ -59,6 +63,7 @@ namespace Editor.ModelRepresentation.Objects
         public uint Flags;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Material
     {
         public uint InclusiveSize;
@@ -67,6 +72,7 @@ namespace Editor.ModelRepresentation.Objects
         public LAYS Lays;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Layer
     {
         public uint InclusiveSize;
@@ -80,6 +86,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KMTA> Kmta;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TextureAnimation
     {
         public uint InclusiveSize;
@@ -88,6 +95,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KTAS> Ktas;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Geoset
     {
         public uint InclusiveSize;
@@ -102,12 +110,13 @@ namespace Editor.ModelRepresentation.Objects
         public uint MaterialId;
         public uint SelectionGroup;
         public uint SelectionFlags;
-        public Extent extent;
+        public Extent Extent;
         public uint ExtentsCount;
-        public Extent[] extents;
+        public Extent[] Extents;
         public UVAS Uvas;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GeosetAnimation
     {
         public uint InclusiveSize;
@@ -119,6 +128,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KGAC> Kgac;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Bone
     {
         public Node Node;
@@ -126,6 +136,7 @@ namespace Editor.ModelRepresentation.Objects
         public uint GeosetAnimationId;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Light
     {
         public uint InclusiveSize;
@@ -146,11 +157,13 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KLAV> Klav;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Helper
     {
         public Node Node;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Attachment
     {
         public uint InclusiveSize;
@@ -160,6 +173,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KATV> Katv;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ParticleEmitter
     {
         public uint InclusiveSize;
@@ -182,6 +196,7 @@ namespace Editor.ModelRepresentation.Objects
 
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct ParticleEmitter2
     {
         public uint InclusiveSize;
@@ -221,6 +236,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KP2V> Kp2v;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RibbonEmitter
     {
         public uint InclusiveSize;
@@ -244,12 +260,14 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KRVS> Krvs;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct EventObject
     {
         public Node Node;
         public KEVT Kevt;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Camera
     {
         public uint InclusiveSize;
@@ -264,6 +282,7 @@ namespace Editor.ModelRepresentation.Objects
         public TracksChunk<KCRL> Kcrl;
     }
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CollisionShape
     {
         public Node Node;

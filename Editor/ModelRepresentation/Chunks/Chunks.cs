@@ -29,6 +29,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Sequences chunk representation;
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SEQS
     {
         public Sequence[] Sequences;
@@ -37,6 +38,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Global sequences chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GLBS
     {
         public GlobalSequence[] Sequences;
@@ -45,6 +47,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Textures chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TEXS
     {
         public Texture[] Textures;
@@ -53,6 +56,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Sound tracks chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SNDS
     {
         public SoundTrack[] Tracks;
@@ -61,6 +65,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Materials chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct MTLS
     {
         public Material[] Materials;
@@ -69,6 +74,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Texture animations chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TXAN
     {
         public TextureAnimation[] Animations;
@@ -77,6 +83,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Geosets chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GEOS
     {
         public Geoset[] Geosets;
@@ -85,6 +92,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Geoset animations chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GEOA
     {
         public GeosetAnimation[] Animations;
@@ -93,6 +101,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Bones chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BONE
     {
         public Bone[] Bones;
@@ -101,6 +110,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Lights chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct LITE
     {
         public Light[] Lights;
@@ -109,6 +119,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Helpers chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct HELP
     {
         public Helper[] Helpers;
@@ -117,6 +128,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Attachments chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ATCH
     {
         public Attachment[] Attachments;
@@ -125,6 +137,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Pivots chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PIVT
     {
         public Vector3[] Points;
@@ -133,6 +146,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Particle emitters chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PREM
     {
         public ParticleEmitter[] Emitters;
@@ -141,6 +155,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Particle emitters (var. 2) chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct PRE2
     {
         public ParticleEmitter2[] Emitters;
@@ -149,6 +164,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Ribbon emitters chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RIBB
     {
         public RibbonEmitter[] Emitters;
@@ -157,6 +173,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Event objects chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct EVTS
     {
         public EventObject[] Objects;
@@ -165,6 +182,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Cameras chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CAMS
     {
         public Camera[] Cameras;
@@ -173,6 +191,7 @@ namespace Editor.ModelRepresentation.Chunks
     /// <summary>
     /// Collision shapes chunk representation.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CLID
     {
         public CollisionShape[] Shapes;

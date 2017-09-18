@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Editor.ModelRepresentation.Chunks;
+using Editor.ModelRepresentation.Objects;
+using OpenTK;
 
 namespace Editor.ModelRepresentation
 {
@@ -34,10 +37,7 @@ namespace Editor.ModelRepresentation
                         break;
 
                     case Chunk.SEQS:
-                        while (offset < oldOffset + size)
-                        {
-                            
-                        }
+                        ParseSEQS(data, ref offset, size);
                         break;
 
                     default:
@@ -48,6 +48,50 @@ namespace Editor.ModelRepresentation
 
 
             return mdx;
+        }
+
+        public static SEQS ParseSEQS(byte[] data, ref int offset, int size)
+        {
+            int oldOffset = offset;
+            SEQS seqs;
+            seqs.Sequences = new Sequence[0];
+            while (offset < oldOffset + size)
+            {
+                //TODO: optimize
+                Array.Resize(ref seqs.Sequences, seqs.Sequences.Length + 1);
+                seqs.Sequences.Last()
+                     = ParseSequence(data, ref offset);
+            }
+        }
+
+        public static Sequence ParseSequence(byte[] data, ref int offset)
+        {
+            Sequence sequence;
+            sequence.Name = ReadString(data, ref offset + 0x0, 80);
+            sequence.Interval[0] = BitConverter.ToUInt32(data, offset + 0x50);
+            sequence.Interval[1] = BitConverter.ToUInt32(data, offset + 0x54);
+            sequence.MoveSpeed = BitConverter.ToSingle(data, offset + 0x58);
+            sequence.Flags = BitConverter.ToUInt32(data, offset + 0x5c);
+            sequence.Rarity = BitConverter.ToSingle(data, offset + 0x60);
+            sequence.SyncPoint = BitConverter.ToUInt32(data, offset + 0x64);
+            sequence.Extent = ReadExtent(data, ref offset + 0x68);
+            offset += 0x6c;
+            return sequence;
+        }
+
+        public static Extent ReadExtent(byte[] data, ref int offset)
+        {
+            Extent extent;
+            extent.BoundsRadius = BitConverter.ToSingle(data, offset + 0x0);
+            extent.Minimum.X = BitConverter.ToSingle(data, offset + 0x4);
+            extent.Minimum.Y = BitConverter.ToSingle(data, offset + 0x8);
+            extent.Minimum.Z = BitConverter.ToSingle(data, offset + 0xc);
+            
+            extent.Maximum.X = BitConverter.ToSingle(data, offset + 0x10);
+            extent.Maximum.Y = BitConverter.ToSingle(data, offset + 0x14);
+            extent.Maximum.Z = BitConverter.ToSingle(data, offset + 0x18);
+            offset += 0x1c;
+            return extent;
         }
 
         public static void ReadTag(byte[] data, ref int offset, uint tag)
@@ -78,11 +122,10 @@ namespace Editor.ModelRepresentation
             offset += Marshal.SizeOf(typeof (T));
             return item;
         }
-
     }
 
 
-    internal static class Chunk
+    static class Chunk
     {
         public const uint MDLX = 0x4d444c58;
 
