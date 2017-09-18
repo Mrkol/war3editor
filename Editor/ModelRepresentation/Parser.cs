@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Editor.ModelRepresentation.Chunks;
 using Editor.ModelRepresentation.Objects;
-using OpenTK;
 
 namespace Editor.ModelRepresentation
 {
@@ -25,7 +24,6 @@ namespace Editor.ModelRepresentation
                 int size = (int) BitConverter.ToUInt32(data, offset + 4);
                 offset += 8; //size values greater than int.maxvalue are undefined behaviour
 
-                int oldOffset = offset;
                 switch (tag)
                 {
                     case Chunk.VERS:
@@ -37,7 +35,11 @@ namespace Editor.ModelRepresentation
                         break;
 
                     case Chunk.SEQS:
-                        ParseSEQS(data, ref offset, size);
+                        mdx.CSequences = ReadSEQS(data, ref offset, size);
+                        break;
+
+                    case Chunk.GLBS:
+                        mdx.CGlobalSequences = ReadGLBS(data, ref offset, size);
                         break;
 
                     default:
@@ -50,49 +52,57 @@ namespace Editor.ModelRepresentation
             return mdx;
         }
 
-        public static SEQS ParseSEQS(byte[] data, ref int offset, int size)
+        public delegate T Reader<T>(byte[] data, ref int offset);
+        public delegate T ReaderSized<T>(byte[] data, ref int offset, int size);
+
+        public static T[] ReadArray<T>(byte[] data, ref int offset, int size, Reader<T> elementReader)
         {
             int oldOffset = offset;
-            SEQS seqs;
-            seqs.Sequences = new Sequence[0];
+            T[] array = new T[0];
             while (offset < oldOffset + size)
             {
                 //TODO: optimize
-                Array.Resize(ref seqs.Sequences, seqs.Sequences.Length + 1);
-                seqs.Sequences.Last()
-                     = ParseSequence(data, ref offset);
+                Array.Resize(ref array, array.Length + 1);
+                array[array.Length - 1] = elementReader(data, ref offset);
             }
+            return array;
         }
 
-        public static Sequence ParseSequence(byte[] data, ref int offset)
+        public static SEQS ReadSEQS(byte[] data, ref int offset, int size)
+        {
+            SEQS seqs;
+            seqs.Sequences = ReadArray(data, ref offset, size, ReadSequence);
+            return seqs;
+        }
+
+        public static GLBS ReadGLBS(byte[] data, ref int offset, int size)
+        {
+            GLBS glbs;
+            glbs.Sequences = ReadArray(data, ref offset, size, ReadGlobalSequence);
+            return glbs;
+        }
+
+        public static Sequence ReadSequence(byte[] data, ref int offset)
         {
             Sequence sequence;
-            sequence.Name = ReadString(data, ref offset + 0x0, 80);
-            sequence.Interval[0] = BitConverter.ToUInt32(data, offset + 0x50);
-            sequence.Interval[1] = BitConverter.ToUInt32(data, offset + 0x54);
+            sequence.Name = ReadString(data, ref offset, 0x50);
+            unsafe
+            {
+                sequence.Interval[0] = BitConverter.ToUInt32(data, offset + 0x50);
+                sequence.Interval[1] = BitConverter.ToUInt32(data, offset + 0x54);                
+            }
             sequence.MoveSpeed = BitConverter.ToSingle(data, offset + 0x58);
             sequence.Flags = BitConverter.ToUInt32(data, offset + 0x5c);
             sequence.Rarity = BitConverter.ToSingle(data, offset + 0x60);
             sequence.SyncPoint = BitConverter.ToUInt32(data, offset + 0x64);
-            sequence.Extent = ReadExtent(data, ref offset + 0x68);
-            offset += 0x6c;
+            sequence.Extent = ReadExtent(data, ref offset);
+            offset += 0x4*6;
             return sequence;
         }
 
-        public static Extent ReadExtent(byte[] data, ref int offset)
-        {
-            Extent extent;
-            extent.BoundsRadius = BitConverter.ToSingle(data, offset + 0x0);
-            extent.Minimum.X = BitConverter.ToSingle(data, offset + 0x4);
-            extent.Minimum.Y = BitConverter.ToSingle(data, offset + 0x8);
-            extent.Minimum.Z = BitConverter.ToSingle(data, offset + 0xc);
-            
-            extent.Maximum.X = BitConverter.ToSingle(data, offset + 0x10);
-            extent.Maximum.Y = BitConverter.ToSingle(data, offset + 0x14);
-            extent.Maximum.Z = BitConverter.ToSingle(data, offset + 0x18);
-            offset += 0x1c;
-            return extent;
-        }
+        public static Reader<GlobalSequence> ReadGlobalSequence = ReadStruct<GlobalSequence>;
+
+        public static Reader<Extent> ReadExtent = ReadStruct<Extent>;
 
         public static void ReadTag(byte[] data, ref int offset, uint tag)
         {

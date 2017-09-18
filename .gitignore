@@ -1,3 +1,10 @@
 Tools/**
 .vs/**
 Lib/**
+Editor/bin/**
+Editor/obj/**
+MpqLib/bin/**
+MpqLib/obj/**
+MpqLibUnitTests/bin/**
+MpqLibUnitTests/obj/**
+msbuild
