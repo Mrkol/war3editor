@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Text;
-using System.Linq;
 using System.Runtime.InteropServices;
 using Editor.ModelRepresentation.Chunks;
-using Editor.ModelRepresentation.Objects;
 
 namespace Editor.ModelRepresentation
 {
-    static class Parser
+    static partial class Parser
     {
         public static ModelX Read(byte[] data)
         {
@@ -20,9 +18,9 @@ namespace Editor.ModelRepresentation
 
             while (offset < data.Length)
             {
-                uint tag = BitConverter.ToUInt32(data, offset);
-                int size = (int) BitConverter.ToUInt32(data, offset + 4);
-                offset += 8; //size values greater than int.maxvalue are undefined behaviour
+                uint tag = ReadUint(data, ref offset);
+                int size = (int) ReadUint(data, ref offset);
+                //size values greater than int.maxvalue are undefined behaviour
 
                 switch (tag)
                 {
@@ -42,6 +40,10 @@ namespace Editor.ModelRepresentation
                         mdx.CGlobalSequences = ReadGLBS(data, ref offset, size);
                         break;
 
+                    case Chunk.GEOS:
+                        mdx.CGeosets = ReadGEOS(data, ref offset, size);
+                        break;
+
                     default:
                         offset += size;
                         break;
@@ -54,55 +56,6 @@ namespace Editor.ModelRepresentation
 
         public delegate T Reader<T>(byte[] data, ref int offset);
         public delegate T ReaderSized<T>(byte[] data, ref int offset, int size);
-
-        public static T[] ReadArray<T>(byte[] data, ref int offset, int size, Reader<T> elementReader)
-        {
-            int oldOffset = offset;
-            T[] array = new T[0];
-            while (offset < oldOffset + size)
-            {
-                //TODO: optimize
-                Array.Resize(ref array, array.Length + 1);
-                array[array.Length - 1] = elementReader(data, ref offset);
-            }
-            return array;
-        }
-
-        public static SEQS ReadSEQS(byte[] data, ref int offset, int size)
-        {
-            SEQS seqs;
-            seqs.Sequences = ReadArray(data, ref offset, size, ReadSequence);
-            return seqs;
-        }
-
-        public static GLBS ReadGLBS(byte[] data, ref int offset, int size)
-        {
-            GLBS glbs;
-            glbs.Sequences = ReadArray(data, ref offset, size, ReadGlobalSequence);
-            return glbs;
-        }
-
-        public static Sequence ReadSequence(byte[] data, ref int offset)
-        {
-            Sequence sequence;
-            sequence.Name = ReadString(data, ref offset, 0x50);
-            unsafe
-            {
-                sequence.Interval[0] = BitConverter.ToUInt32(data, offset + 0x50);
-                sequence.Interval[1] = BitConverter.ToUInt32(data, offset + 0x54);                
-            }
-            sequence.MoveSpeed = BitConverter.ToSingle(data, offset + 0x58);
-            sequence.Flags = BitConverter.ToUInt32(data, offset + 0x5c);
-            sequence.Rarity = BitConverter.ToSingle(data, offset + 0x60);
-            sequence.SyncPoint = BitConverter.ToUInt32(data, offset + 0x64);
-            sequence.Extent = ReadExtent(data, ref offset);
-            offset += 0x4*6;
-            return sequence;
-        }
-
-        public static Reader<GlobalSequence> ReadGlobalSequence = ReadStruct<GlobalSequence>;
-
-        public static Reader<Extent> ReadExtent = ReadStruct<Extent>;
 
         public static void ReadTag(byte[] data, ref int offset, uint tag)
         {
@@ -123,6 +76,34 @@ namespace Editor.ModelRepresentation
         {
             return Encoding.UTF8.GetString(BitConverter.GetBytes(tag), 0, 4);
         }
+
+        public static uint ReadUint(byte[] data, ref int offset)
+        {
+            uint n = BitConverter.ToUInt32(data, offset);
+            offset += 4;
+            return n;
+        }
+
+        public static ushort ReadUshort(byte[] data, ref int offset)
+        {
+            ushort n = BitConverter.ToUInt16(data, offset);
+            offset += 2;
+            return n;
+        }
+
+        public static byte ReadByte(byte[] data, ref int offset)
+        {
+            byte n = data[offset];
+            offset += 1;
+            return n;
+        }
+
+        public static float ReadFloat(byte[] data, ref int offset)
+        {
+            float n = BitConverter.ToSingle(data, offset);
+            offset += 4;
+            return n;
+        }
         
         public static T ReadStruct<T>(byte[] data, ref int offset)
         {
@@ -131,6 +112,43 @@ namespace Editor.ModelRepresentation
             handle.Free();
             offset += Marshal.SizeOf(typeof (T));
             return item;
+        }
+
+        public static T[] ReadArray<T>(byte[] data, ref int offset, int size, Reader<T> elementReader = null)
+        {
+            if (elementReader == null) elementReader = ReadStruct<T>;
+            int oldOffset = offset;
+            T[] array = new T[0];
+            while (offset < oldOffset + size)
+            {
+                //TODO: optimize
+                Array.Resize(ref array, array.Length + 1);
+                array[array.Length - 1] = elementReader(data, ref offset);
+            }
+            return array;
+        }
+
+        public static T[] ReadFixedArray<T>(byte[] data, ref int offset, uint count, Reader<T> elementReader = null)
+        {
+            if (elementReader == null) elementReader = ReadStruct<T>;
+            T[] array = new T[count];
+            for (int i = 0; i < count; i++)
+            {
+                array[i] = elementReader(data, ref offset);
+            }
+            return array;
+        }
+
+        public static T? ReadChunk<T>(byte[] data, ref int offset, ReaderSized<T> reader) where T : struct
+        {
+            uint tag = ReadUint(data, ref offset);
+            if (tag != Chunk.FromType<T>()) 
+            {
+                offset -= 4;
+                return null;
+            }
+            int size = (int) ReadUint(data, ref offset);
+            return reader(data, ref offset, size);
         }
     }
 
@@ -160,5 +178,32 @@ namespace Editor.ModelRepresentation
         public const uint EVTS = 0x45565453;
         public const uint CAMS = 0x43414d53;
         public const uint CLID = 0x434c4944;
+
+        public static uint FromType<T>()
+        {
+            if (typeof(T) == typeof(VERS)) return Chunk.VERS;
+            if (typeof(T) == typeof(MODL)) return Chunk.MODL;
+            if (typeof(T) == typeof(SEQS)) return Chunk.SEQS;
+            if (typeof(T) == typeof(GLBS)) return Chunk.GLBS;
+            if (typeof(T) == typeof(TEXS)) return Chunk.TEXS;
+            if (typeof(T) == typeof(SNDS)) return Chunk.SNDS;
+            if (typeof(T) == typeof(MTLS)) return Chunk.MTLS;
+            if (typeof(T) == typeof(TXAN)) return Chunk.TXAN;
+            if (typeof(T) == typeof(GEOS)) return Chunk.GEOS;
+            if (typeof(T) == typeof(GEOA)) return Chunk.GEOA;
+            if (typeof(T) == typeof(BONE)) return Chunk.BONE;
+            if (typeof(T) == typeof(LITE)) return Chunk.LITE;
+            if (typeof(T) == typeof(HELP)) return Chunk.HELP;
+            if (typeof(T) == typeof(ATCH)) return Chunk.ATCH;
+            if (typeof(T) == typeof(PIVT)) return Chunk.PIVT;
+            if (typeof(T) == typeof(PREM)) return Chunk.PREM;
+            if (typeof(T) == typeof(PRE2)) return Chunk.PRE2;
+            if (typeof(T) == typeof(RIBB)) return Chunk.RIBB;
+            if (typeof(T) == typeof(EVTS)) return Chunk.EVTS;
+            if (typeof(T) == typeof(CAMS)) return Chunk.CAMS;
+            if (typeof(T) == typeof(CLID)) return Chunk.CLID;
+
+            return 0;
+        }
     }
 }

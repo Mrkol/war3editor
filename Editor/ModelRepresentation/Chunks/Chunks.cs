@@ -203,7 +203,7 @@ namespace Editor.ModelRepresentation.Chunks
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VRTX
     {
-        public uint Count;
+        public uint VerticesCount;
         public Vector3[] Vertices;
     }
 
@@ -213,7 +213,7 @@ namespace Editor.ModelRepresentation.Chunks
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct NRMS
     {
-        public int Count;
+        public uint NormalsCount;
         public Vector3[] Normals;
     }
 
@@ -223,7 +223,7 @@ namespace Editor.ModelRepresentation.Chunks
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct UVBS
     {
-        public uint Count;
+        public uint TextureCoordinatesCount;
         public Vector2[] TextureCoordinates;
     }
 
@@ -256,7 +256,7 @@ namespace Editor.ModelRepresentation.Chunks
     public struct PCNT
     {
         public uint FaceGroupsCount;
-        public uint FaceGroupPrimitiveCounts;
+        public uint[] FaceGroupPrimitiveCounts;
     }
 
     /// <summary>
