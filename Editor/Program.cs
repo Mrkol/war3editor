@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Editor.GUI;
 using Environment = Editor.MapRepresentation.Environment;
+using Editor.ModelRepresentation;
 
 namespace Editor
 {
@@ -13,10 +14,7 @@ namespace Editor
 
         [STAThread]
         static void Main(string[] args)
-        {
-            Application.EnableVisualStyles();
-            Application.CurrentCulture = CultureInfo.InvariantCulture;
-            
+        {          
 
             // FileStream input =
             //     new FileStream(@"C:\Users\Roman\war3editor\Tools\(2)BootyBay.w3m", FileMode.Open);
@@ -30,6 +28,13 @@ namespace Editor
             // uint num = Mpq.ExtractAll(fd, @"C:\Users\Roman\war3editor\Tools\Output2\");
             // Console.WriteLine("Extracted " + num + " files");
 
+            FileStream rock = 
+                new FileStream(@"C:\Users\Roman\war3editor\Tools\AshenRock0.mdx", FileMode.Open);
+            byte[] rockraw = new byte[rock.Length];
+            rock.Read(rockraw, 0, (int)rock.Length);
+            ModelX mdx = Parser.Read(rockraw);
+            //Console.WriteLine(mdx.ToString(0));
+
             FileStream envfile =
                 new FileStream(@"C:\Users\Roman\war3editor\Tools\Output\war3map.w3e", FileMode.Open);
             byte[] envraw = new byte[envfile.Length];
@@ -40,13 +45,29 @@ namespace Editor
             //FileStream newenv =
             //    new FileStream(@"C:\Users\Roman\Documents\Visual Studio 2015\Projects\Editor\Tools\Output\new.w3e", FileMode.Create);
             //env.Write(newenv);
-            EnvironmentEditorForm = new EnvironmentEditor(env);
+
+
+            Application.EnableVisualStyles();
+            Application.CurrentCulture = CultureInfo.InvariantCulture;
+            
+            /*EnvironmentEditorForm = new EnvironmentEditor(env);
+            EnvironmentEditorForm.FormClosed += (e, s) => 
+                { 
+                    Console.WriteLine("closed");
+                    WinapiAccess.Suspend();
+                    Application.Exit();
+                };*/
+
+            TestOpenGLForm form = new TestOpenGLForm();
+            form.FormClosed += (e, s) =>
+                {
+                    WinapiAccess.Suspend();
+                    Application.Exit();
+                };
+
 
             WinapiAccess.Activate();
-            Application.Run(EnvironmentEditorForm);
-            WinapiAccess.Suspend();
-
-            Console.ReadLine();
+            Application.Run(form);
         }
     }
 }

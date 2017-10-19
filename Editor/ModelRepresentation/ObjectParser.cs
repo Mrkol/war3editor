@@ -24,11 +24,44 @@ namespace Editor.ModelRepresentation
 
         public static Texture ReadTexture(byte[] data, ref int offset)
         {
-            Texture texture;
+            Texture texture = new Texture();
             texture.ReplaceableId = ReadUint(data, ref offset);
             texture.FileName = ReadString(data, ref offset, 260);
             texture.Flags = ReadUint(data, ref offset);
             return texture;
+        }
+
+        public static Material ReadMaterial(byte[] data, ref int offset)
+        {
+        	Material material;
+        	material.InclusiveSize = ReadUint(data, ref offset);
+        	material.PriorityPlane = ReadUint(data, ref offset);
+        	material.Flags = ReadUint(data, ref offset);
+        	material.Lays = ReadChunk(data, ref offset, ReadLAYS).Value;
+        	return material;
+        }
+
+        public static Layer ReadLayer(byte[] data, ref int offset)
+        {
+        	Layer layer = new Layer();
+        	layer.InclusiveSize = ReadUint(data, ref offset);
+        	layer.FilterMode = ReadUint(data, ref offset);
+        	layer.ShadingFlags = ReadUint(data, ref offset);
+        	layer.TextureId = ReadUint(data, ref offset);
+        	layer.TextureAnimationId = ReadUint(data, ref offset);
+        	layer.CoordId = ReadUint(data, ref offset);
+        	layer.Alpha = ReadFloat(data, ref offset);
+        	//TODO: read tracks
+        	return layer;
+        }
+
+        public static Bone ReadBone(byte[] data, ref int offset)
+        {
+        	Bone bone = new Bone();
+        	bone.Node = ReadNode(data, ref offset);
+        	bone.GeosetId = ReadUint(data, ref offset);
+        	bone.GeosetAnimationId = ReadUint(data, ref offset);
+        	return bone;
         }
 
         public static Geoset ReadGeoset(byte[] data, ref int offset)
@@ -53,6 +86,18 @@ namespace Editor.ModelRepresentation
             geoset.Extents = ReadFixedArray(data, ref offset, geoset.ExtentsCount, ReadExtent);
             geoset.Uvas = ReadChunk<UVAS>(data, ref offset, ReadUVAS).Value;
             return geoset;
+        }
+
+        public static Node ReadNode(byte[] data, ref int offset)
+        {
+        	Node node = new Node();
+        	node.InclusiveSize = ReadUint(data, ref offset);
+        	node.Name = ReadString(data, ref offset, 80);
+        	node.ObjectId = ReadUint(data, ref offset);
+        	node.ParentId = ReadUint(data, ref offset);
+        	node.Flags = ReadUint(data, ref offset);
+        	//TODO: add tracks
+        	return node;
         }
 
         public static Reader<GlobalSequence> ReadGlobalSequence = ReadStruct<GlobalSequence>;

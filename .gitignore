@@ -8,3 +8,5 @@ MpqLib/obj/**
 MpqLibUnitTests/bin/**
 MpqLibUnitTests/obj/**
 msbuild
+mdbg
+
