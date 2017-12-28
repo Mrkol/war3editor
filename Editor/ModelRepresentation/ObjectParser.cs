@@ -1,5 +1,7 @@
 using Editor.ModelRepresentation.Chunks;
 using Editor.ModelRepresentation.Objects;
+using Editor.ModelRepresentation.Tracks;
+using OpenTK;
 
 namespace Editor.ModelRepresentation
 {
@@ -33,16 +35,19 @@ namespace Editor.ModelRepresentation
 
         public static Material ReadMaterial(byte[] data, ref int offset)
         {
+            int prevOffset = offset;
         	Material material;
         	material.InclusiveSize = ReadUint(data, ref offset);
         	material.PriorityPlane = ReadUint(data, ref offset);
         	material.Flags = ReadUint(data, ref offset);
         	material.Lays = ReadChunk(data, ref offset, ReadLAYS).Value;
+            offset = prevOffset + (int) material.InclusiveSize;
         	return material;
         }
 
         public static Layer ReadLayer(byte[] data, ref int offset)
         {
+            int prevOffset = offset;
         	Layer layer = new Layer();
         	layer.InclusiveSize = ReadUint(data, ref offset);
         	layer.FilterMode = ReadUint(data, ref offset);
@@ -51,7 +56,11 @@ namespace Editor.ModelRepresentation
         	layer.TextureAnimationId = ReadUint(data, ref offset);
         	layer.CoordId = ReadUint(data, ref offset);
         	layer.Alpha = ReadFloat(data, ref offset);
-        	//TODO: read tracks
+
+            layer.Kmta = ReadTracksChunk<KMTA, float>(data, ref offset);
+            layer.Kmtf = ReadTracksChunk<KMTF, uint>(data, ref offset);
+
+            offset = prevOffset + (int) layer.InclusiveSize;
         	return layer;
         }
 
@@ -66,6 +75,7 @@ namespace Editor.ModelRepresentation
 
         public static Geoset ReadGeoset(byte[] data, ref int offset)
         {
+            int prevOffset = offset;
             Geoset geoset = new Geoset();
             geoset.InclusiveSize = ReadUint(data, ref offset);
             //TODO: graceful exception when any of those are missing
@@ -85,18 +95,26 @@ namespace Editor.ModelRepresentation
             geoset.ExtentsCount = ReadUint(data, ref offset);
             geoset.Extents = ReadFixedArray(data, ref offset, geoset.ExtentsCount, ReadExtent);
             geoset.Uvas = ReadChunk<UVAS>(data, ref offset, ReadUVAS).Value;
+
+            offset = prevOffset + (int) geoset.InclusiveSize;
             return geoset;
         }
 
         public static Node ReadNode(byte[] data, ref int offset)
         {
+            int prevOffset = offset;
         	Node node = new Node();
         	node.InclusiveSize = ReadUint(data, ref offset);
         	node.Name = ReadString(data, ref offset, 80);
         	node.ObjectId = ReadUint(data, ref offset);
         	node.ParentId = ReadUint(data, ref offset);
         	node.Flags = ReadUint(data, ref offset);
-        	//TODO: add tracks
+
+            node.Kgtr = ReadTracksChunk<KGTR, Vector3>(data, ref offset);
+            node.Kgsc = ReadTracksChunk<KGSC, Vector3>(data, ref offset);
+            node.Kgrt = ReadTracksChunk<KGRT, Vector4>(data, ref offset);
+
+            offset = prevOffset + (int) node.InclusiveSize;
         	return node;
         }
 

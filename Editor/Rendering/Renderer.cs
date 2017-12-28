@@ -2,7 +2,7 @@ using System;
 
 namespace Editor.Rendering
 {
-    abstract class Renderer
+    public abstract class Renderer
     {
     	public bool Initialized { get; private set; }
 
@@ -22,9 +22,9 @@ namespace Editor.Rendering
     	}
     }
 
-    abstract class RendererBuilder<T>
+    public abstract class RendererBuilder<T>
     {
-		public abstract virtual Renderer Build(T param);
+		public abstract Renderer Build(T param);
     }
 
     public class UninitializedRendererException : Exception
@@ -34,20 +34,22 @@ namespace Editor.Rendering
 
     	}
 
-    	public UninitializedRendererException(Renderer renderer)
+    	public UninitializedRendererException(Renderer renderer) 
+            : this("A "
+                + renderer
+                + " renderer was attempted to be invoked"
+                + " although it was not initialized.")
     	{
-    		Message = 
-    			"A "
-    			+ renderer
-    			+ " renderer was attempted to be invoked"
-    			+ " although it was not initialized.";
+
     	}
 
-	    public UninitializedRendererException(string message) : base(message)
+	    public UninitializedRendererException(string message) 
+            : base(message)
 	    {
 	    }
 
-	    public UninitializedRendererException(string message, Exception inner) : base(message, inner)
+	    public UninitializedRendererException(string message, Exception inner) 
+            : base(message, inner)
 	    {
 	    }
     }

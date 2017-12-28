@@ -91,7 +91,7 @@ namespace Editor
 			return result;
 		}
 
-		public static Type[] ToStringAsIs =  
+		public static Type[] ToStringAsIs = 
 			{typeof(byte), typeof(sbyte),
 			 typeof(short), typeof(ushort),
 			 typeof(int), typeof(uint),

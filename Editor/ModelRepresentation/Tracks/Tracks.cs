@@ -1,10 +1,11 @@
-﻿using OpenTK;
+using OpenTK;
 
 namespace Editor.ModelRepresentation.Tracks
 {
     public interface ITrack { }
 
-    public class Track<T> : ITrack where T : struct
+    public class Track<T> : ITrack
+        where T : struct
     {
         public int Frame;
         public T Value;
@@ -12,7 +13,8 @@ namespace Editor.ModelRepresentation.Tracks
         public T? OutTan;
     }
 
-    public class TracksChunk<T> where T : ITrack
+    public class TracksChunk<T> 
+        where T : ITrack
     {
         //remember: first come a 4 byte tag
         public uint TracksCount;
@@ -22,9 +24,9 @@ namespace Editor.ModelRepresentation.Tracks
     } 
 
     //Node
-    public class KGTR : Track<Vector3> { }
     public class KGRT : Track<Vector4> { }
     public class KGSC : Track<Vector3> { }
+    public class KGTR : Track<Vector3> { }
 
     //Layer
     public class KMTF : Track<uint> { }

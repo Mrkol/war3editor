@@ -3,11 +3,11 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace Editor.Rendering
 {
-    class ModelXRendererBuilder : RendererBuilder<ModelX>
+    public class ModelXRendererBuilder : RendererBuilder<ModelX>
     {
     	public override Renderer Build(ModelX param)
         {
-
+        	return new ModelXRenderer(param);
         }
 
         public class ModelXRenderer : Renderer
@@ -15,7 +15,7 @@ namespace Editor.Rendering
         	readonly ModelX Target;
         	private int BufferObjectHandle;
 
-        	ModelXRenderer(ModelX targ)
+        	public ModelXRenderer(ModelX targ)
         	{
         		Target = targ;
         	}

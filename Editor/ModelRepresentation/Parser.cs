@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Runtime.InteropServices;
 using Editor.ModelRepresentation.Chunks;
+using Editor.ModelRepresentation.Tracks;
 
 namespace Editor.ModelRepresentation
 {
@@ -75,9 +76,16 @@ namespace Editor.ModelRepresentation
 
         public static void ReadTag(byte[] data, ref int offset, uint tag)
         {
-            if (BitConverter.ToUInt32(data, offset) != tag)
+            if (!TryReadTag(data, ref offset, tag))
                 throw new FormatException("Expected a " + TagToString(tag) + " tag at " + offset.ToString("X8"));
+        }
+
+        public static bool TryReadTag(byte[] data, ref int offset, uint tag)
+        {
+            if (BitConverter.ToUInt32(data, offset) != tag)
+                return false;
             offset += 4;
+            return true;
         }
 
         public static string ReadString(byte[] data, ref int offset, int count)
@@ -96,6 +104,13 @@ namespace Editor.ModelRepresentation
         public static uint ReadUint(byte[] data, ref int offset)
         {
             uint n = BitConverter.ToUInt32(data, offset);
+            offset += 4;
+            return n;
+        }
+
+        public static int ReadInt(byte[] data, ref int offset)
+        {
+            int n = BitConverter.ToInt32(data, offset);
             offset += 4;
             return n;
         }
@@ -130,7 +145,8 @@ namespace Editor.ModelRepresentation
             return item;
         }
 
-        public static T[] ReadArray<T>(byte[] data, ref int offset, uint size, Reader<T> elementReader = null) where T : struct
+        public static T[] ReadArray<T>(byte[] data, ref int offset, uint size, Reader<T> elementReader = null) 
+            where T : struct
         {
             if (elementReader == null) elementReader = ReadStruct<T>;
             int oldOffset = offset;
@@ -144,9 +160,11 @@ namespace Editor.ModelRepresentation
             return array;
         }
 
-        public static T[] ReadFixedArray<T>(byte[] data, ref int offset, uint count, Reader<T> elementReader = null) where T : struct
+        public static T[] ReadFixedArray<T>(byte[] data, ref int offset, uint count, Reader<T> elementReader)
         {
-            if (elementReader == null) elementReader = ReadStruct<T>;
+            if (elementReader == null) 
+                throw new FormatException("Can't pass a null reader to ReadFixedArray.");
+
             T[] array = new T[count];
             for (int i = 0; i < count; i++)
             {
@@ -157,12 +175,8 @@ namespace Editor.ModelRepresentation
 
         public static T? ReadChunk<T>(byte[] data, ref int offset, ReaderSized<T> reader) where T : struct
         {
-            uint tag = ReadUint(data, ref offset);
-            if (tag != Chunk.FromType<T>()) 
-            {
-                offset -= 4;
-                return null;
-            }
+            bool tagPresent = TryReadTag(data, ref offset, Chunk.FromType<T>());
+            if (!tagPresent) return null;
             uint size = ReadUint(data, ref offset);
             return reader(data, ref offset, size);
         }
@@ -206,6 +220,49 @@ namespace Editor.ModelRepresentation
         public const uint UVAS = 0x53415655;
         public const uint UVBS = 0x53425655;
 
+        public const uint KGRT = 0x5452474b;
+        public const uint KGSC = 0x4353474b;
+        public const uint KGTR = 0x5254474b;
+        public const uint KMTF = 0x46544d4b;
+        public const uint KMTA = 0x41544d4b;
+        public const uint KTAT = 0x5441544b;
+        public const uint KTAR = 0x5241544b;
+        public const uint KTAS = 0x5341544b;
+        public const uint KGAO = 0x4f41474b;
+        public const uint KGAC = 0x4341474b;
+        public const uint KLAS = 0x53414c4b;
+        public const uint KLAE = 0x45414c4b;
+        public const uint KLAC = 0x43414c4b;
+        public const uint KLAI = 0x49414c4b;
+        public const uint KLBI = 0x49424c4b;
+        public const uint KLBC = 0x43424c4b;
+        public const uint KLAV = 0x56414c4b;
+        public const uint KATV = 0x5654414b;
+        public const uint KPEE = 0x4545504b;
+        public const uint KPEG = 0x4745504b;
+        public const uint KPLN = 0x4e4c504b;
+        public const uint KPLT = 0x544c504b;
+        public const uint KPEL = 0x4c45504b;
+        public const uint KPES = 0x5345504b;
+        public const uint KPEV = 0x5645504b;
+        public const uint KP2E = 0x4532504b;
+        public const uint KP2G = 0x4732504b;
+        public const uint KP2L = 0x4c32504b;
+        public const uint KP2S = 0x5332504b;
+        public const uint KP2V = 0x5632504b;
+        public const uint KP2R = 0x5232504b;
+        public const uint KP2N = 0x4e32504b;
+        public const uint KP2W = 0x5732504b;
+        public const uint KRVS = 0x5356524b;
+        public const uint KRHA = 0x4148524b;
+        public const uint KRHB = 0x4248524b;
+        public const uint KRAL = 0x4c41524b;
+        public const uint KRCO = 0x4f43524b;
+        public const uint KRTX = 0x5854524b;
+        public const uint KCTR = 0x5254434b;
+        public const uint KCRL = 0x4c52434b;
+        public const uint KTTR = 0x5254544b;
+
         public static uint FromType<T>()
         {
             if (typeof(T) == typeof(VERS)) return Chunk.VERS;
@@ -240,6 +297,49 @@ namespace Editor.ModelRepresentation
             if (typeof(T) == typeof(MATS)) return Chunk.MATS;
             if (typeof(T) == typeof(UVAS)) return Chunk.UVAS;
             if (typeof(T) == typeof(UVBS)) return Chunk.UVBS;
+
+            if (typeof(T) == typeof(KGRT)) return Chunk.KGRT;
+            if (typeof(T) == typeof(KGSC)) return Chunk.KGSC;
+            if (typeof(T) == typeof(KGTR)) return Chunk.KGTR;
+            if (typeof(T) == typeof(KMTF)) return Chunk.KMTF;
+            if (typeof(T) == typeof(KMTA)) return Chunk.KMTA;
+            if (typeof(T) == typeof(KTAT)) return Chunk.KTAT;
+            if (typeof(T) == typeof(KTAR)) return Chunk.KTAR;
+            if (typeof(T) == typeof(KTAS)) return Chunk.KTAS;
+            if (typeof(T) == typeof(KGAO)) return Chunk.KGAO;
+            if (typeof(T) == typeof(KGAC)) return Chunk.KGAC;
+            if (typeof(T) == typeof(KLAS)) return Chunk.KLAS;
+            if (typeof(T) == typeof(KLAE)) return Chunk.KLAE;
+            if (typeof(T) == typeof(KLAC)) return Chunk.KLAC;
+            if (typeof(T) == typeof(KLAI)) return Chunk.KLAI;
+            if (typeof(T) == typeof(KLBI)) return Chunk.KLBI;
+            if (typeof(T) == typeof(KLBC)) return Chunk.KLBC;
+            if (typeof(T) == typeof(KLAV)) return Chunk.KLAV;
+            if (typeof(T) == typeof(KATV)) return Chunk.KATV;
+            if (typeof(T) == typeof(KPEE)) return Chunk.KPEE;
+            if (typeof(T) == typeof(KPEG)) return Chunk.KPEG;
+            if (typeof(T) == typeof(KPLN)) return Chunk.KPLN;
+            if (typeof(T) == typeof(KPLT)) return Chunk.KPLT;
+            if (typeof(T) == typeof(KPEL)) return Chunk.KPEL;
+            if (typeof(T) == typeof(KPES)) return Chunk.KPES;
+            if (typeof(T) == typeof(KPEV)) return Chunk.KPEV;
+            if (typeof(T) == typeof(KP2E)) return Chunk.KP2E;
+            if (typeof(T) == typeof(KP2G)) return Chunk.KP2G;
+            if (typeof(T) == typeof(KP2L)) return Chunk.KP2L;
+            if (typeof(T) == typeof(KP2S)) return Chunk.KP2S;
+            if (typeof(T) == typeof(KP2V)) return Chunk.KP2V;
+            if (typeof(T) == typeof(KP2R)) return Chunk.KP2R;
+            if (typeof(T) == typeof(KP2N)) return Chunk.KP2N;
+            if (typeof(T) == typeof(KP2W)) return Chunk.KP2W;
+            if (typeof(T) == typeof(KRVS)) return Chunk.KRVS;
+            if (typeof(T) == typeof(KRHA)) return Chunk.KRHA;
+            if (typeof(T) == typeof(KRHB)) return Chunk.KRHB;
+            if (typeof(T) == typeof(KRAL)) return Chunk.KRAL;
+            if (typeof(T) == typeof(KRCO)) return Chunk.KRCO;
+            if (typeof(T) == typeof(KRTX)) return Chunk.KRTX;
+            if (typeof(T) == typeof(KCTR)) return Chunk.KCTR;
+            if (typeof(T) == typeof(KCRL)) return Chunk.KCRL;
+            if (typeof(T) == typeof(KTTR)) return Chunk.KTTR;
 
             Console.WriteLine("Warning: tag for type {0} is uknown.", typeof(T));
             return 0;

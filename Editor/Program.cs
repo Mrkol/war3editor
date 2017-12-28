@@ -29,11 +29,11 @@ namespace Editor
             // Console.WriteLine("Extracted " + num + " files");
 
             FileStream rock = 
-                new FileStream(@"C:\Users\Roman\war3editor\Tools\AshenRock0.mdx", FileMode.Open);
+                new FileStream(@"C:\Users\Roman\war3editor\Tools\Rat_Portrait.mdx", FileMode.Open);
             byte[] rockraw = new byte[rock.Length];
             rock.Read(rockraw, 0, (int)rock.Length);
             ModelX mdx = Parser.Read(rockraw);
-            //Console.WriteLine(mdx.ToString(0));
+            Console.WriteLine(mdx.ToString(0));
 
             FileStream envfile =
                 new FileStream(@"C:\Users\Roman\war3editor\Tools\Output\war3map.w3e", FileMode.Open);

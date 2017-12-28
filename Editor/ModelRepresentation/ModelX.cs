@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Editor.ModelRepresentation.Chunks;
+﻿using Editor.ModelRepresentation.Chunks;
 
 namespace Editor.ModelRepresentation
 {
-    class ModelX
+    public class ModelX
     {
         public VERS? CVersion;
         public MODL? CModel;

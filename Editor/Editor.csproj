@@ -90,6 +90,7 @@
     <Compile Include="GUI\TestOpenGLForm.cs" />
     <Compile Include="Rendering\ModelXRenderer.cs" />
     <Compile Include="Rendering\Renderer.cs" />
+    <Compile Include="ModelRepresentation\TrackParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
