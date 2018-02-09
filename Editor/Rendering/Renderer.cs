@@ -1,56 +1,33 @@
-using System;
+using OpenTK;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Editor.Rendering
 {
     public abstract class Renderer
     {
-    	public bool Initialized { get; private set; }
+		public virtual void Render(RenderingArgs args);
 
-    	public virtual void Initialize()
-    	{
-    		Initialized = true;
-    	}
+        public static void ApplyUniformUVP(RenderingArgs args)
+        {
+            GL.UniformMatrix4(args.ViewMatrixLocation, false, 
+                ref args.ViewMatrix);
 
-		public virtual void Render()
-		{
-			if (!Initialized) throw new UninitializedRendererException(this);
-		}
+            GL.UniformMatrix4(args.ProjectionMatrixLocation, false, 
+                ref args.ProjectionMatrix);
 
-    	public virtual void Finalize()
-    	{
-    		Initialized = false;
-    	}
+            GL.UniformMatrix4(args.ModelMatrixLocation, false, 
+                ref args.ModelMatrix);
+        }
     }
 
-    public abstract class RendererBuilder<T>
+    public class RenderingArgs
     {
-		public abstract Renderer Build(T param);
-    }
-
-    public class UninitializedRendererException : Exception
-    {
-    	private UninitializedRendererException()
-    	{
-
-    	}
-
-    	public UninitializedRendererException(Renderer renderer) 
-            : this("A "
-                + renderer
-                + " renderer was attempted to be invoked"
-                + " although it was not initialized.")
-    	{
-
-    	}
-
-	    public UninitializedRendererException(string message) 
-            : base(message)
-	    {
-	    }
-
-	    public UninitializedRendererException(string message, Exception inner) 
-            : base(message, inner)
-	    {
-	    }
+        public ulong Time;
+        public Matrix4 ViewMatrix = Matrix4.Identity;
+        public Matrix4 ProjectionMatrix = Matrix4.Identity;
+        public Matrix4 ModelMatrix = Matrix4.Identity;
+        public int ViewMatrixLocation;
+        public int ProjectionMatrixLocation;
+        public int ModelMatrixLocation;
     }
 }

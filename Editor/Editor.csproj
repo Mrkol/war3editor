@@ -91,6 +91,9 @@
     <Compile Include="Rendering\ModelXRenderer.cs" />
     <Compile Include="Rendering\Renderer.cs" />
     <Compile Include="ModelRepresentation\TrackParser.cs" />
+    <Compile Include="Rendering\Skeleton.cs" />
+    <Compile Include="Rendering\ShaderManager.cs" />
+    <Compile Include="Rendering\GlobalRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -105,6 +108,8 @@
     <EmbeddedResource Include="GUI\EnvironmentEditor.resx">
       <DependentUpon>EnvironmentEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Rendering\main.vsh" />
+    <EmbeddedResource Include="Rendering\main.fsh" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

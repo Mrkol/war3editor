@@ -56,8 +56,8 @@ namespace Editor.GUI
 			if (DesignMode) return;
 
 			testcontrol.MakeCurrent();
-			GL.Clear(ClearBufferMask.ColorBufferBit);
 
+			
 
 			testcontrol.SwapBuffers();
 		}
